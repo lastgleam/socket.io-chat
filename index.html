@@ -4,8 +4,28 @@
     <title>Socket.IO chat</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <style>
+        .title {
+            background-color: azure;
+        }
+
         .info {
             background-color: antiquewhite;
+            text-align: center;
+        }
+
+        #messagesPanel {
+            position: relative;
+            overflow: auto;
+            height: 300px;
+        }
+
+        #writing {
+            width: 60%;
+        }
+
+        #messages {
+            list-style: none;
+            padding: 0;
         }
     </style>
     <script
@@ -24,16 +44,23 @@
 </head>
 <body>
 <div class="container">
-    <h1> //chat example</h1>
-    <p>こんにちは！<span id="socketIdLabel" name="socketIdLabel"></span>さん</p>
+
+    <div class="panel top">
+        <h1 class="title"> //chat example</h1>
+        こんにちは！<b><span id="socketIdLabel" name="socketIdLabel"></span></b>さん
+    </div>
     <div class="container" id="listPanel">
         <h2>Room List</h2>
         <ul id="roomList" name="roomList"></ul>
         <button class="btn btn-success" id="create" onClick="joinRoom()">Create new room</button>
     </div>
     <div class="container" id="chatPanel">
-        <h2>roomName : <span id="roomNameLabel"></span></h2>
-        <ul id="messages" name="messages"></ul>
+        <h2><span id="roomNameLabel"></span><span id="number"></span></h2>
+        <ul id="chatters"></ul>
+        <div id="messagesPanel">
+            <ul id="messages" name="messages"></ul>
+        </div>
+        <span id="changing" name="changing"></span><br>
         <input type="text" id="writing" name="writing"/>
         <button class="btn btn-primary" id="send" name="send" onClick="send()">send</button>
         <button class="btn btn-secondary" id="top" name="top" onClick="leaveRoom()">top</button>
@@ -45,11 +72,15 @@
     const $chatPanel = $('#chatPanel');
     const $roomList = $('#roomList');
     const $socketIdLabel = $('#socketIdLabel');
+    const $messagesPanel = $('#messagesPanel');
+    const $chatters = $('#chatters');
+    const $number = $('#number');
     const $messages = $('#messages');
     const $send = $('#send');
+    const $changing = $('#changing');
     const $writing = $('#writing');
     const $roomNameLabel = $('#roomNameLabel');
-    let roomName;
+    let roomName = "";
 
     const socket = io();
     const user = {};
@@ -60,6 +91,10 @@
             if (event.keyCode && event.keyCode === 13) {
                 send();
             }
+        });
+
+        $writing.on('input', () => {
+            changingTrigger();
         });
     });
 
@@ -73,7 +108,7 @@
         socket.emit('leave', roomName, user);
     });
 
-    socket.on('roomlist', rooms => {
+    socket.on('rooms', rooms => {
         console.log(rooms);
         $roomList.empty();
         console.log(rooms);
@@ -84,19 +119,82 @@
             const link = $('<a>').attr('href', 'javascript:void(0)').on('click', () => {
                 roomName = _roomName;
                 joinRoom();
-            }).text(_roomName);
+            }).text(_roomName +" ("+ rooms[_roomName].length +")");
             const roomLink = $('<li>').html(link);
             $roomList.append(roomLink);
         });
+        if (user.roomName) {
+            Object.keys(rooms).forEach(_roomName => {
+                if (user.roomName === _roomName) {
+                    $chatters.empty();
+                    rooms[_roomName].forEach(socket_id => {
+                        let idLabel = $('<li>').text(socket_id);
+                        $chatters.append(idLabel);
+                    });
+                    let number = rooms[_roomName].length;
+                    $number.empty();
+                    $number.append(" (" + number + ")");
+                }
+                const roomLink = $('<li>').html(link);
+                $roomList.append(roomLink);
+            });
+        }
+    });
+
+    socket.on('info', data => {
+        const status = data.status;
+        const nick = data.user.nick;
+        const roomName = data.user.roomName;
+        let info = $('<li>').addClass('info');
+        if (status === 'join') {
+            info.text("[" + presentTime().time + "]" + nick + ' has joined to this room');
+        } else if (status === 'leave') {
+            info.text("[" + presentTime().time + "]" + nick + ' has left from this room');
+        }
+        $messages.append(info);
+    });
+
+    socket.on('publish', data => {
+        let nick = data.user.nick;
+        let message = data.message;
+        let li = $("<li>").html("[" + presentTime().time +
+            "] <b>" + nick + "</b> (" + data.user.socket_id + ") " + " : " + message
+        );
+        $messages.append(li);
+        $messagesPanel.scrollTop(99999999999999999999999999999999);
+    });
+
+    socket.on('changeInfo', data => {
+        if (data.status === 'begin') {
+            if ($("." + data.user.nick).length) {
+                return false;
+            } else {
+                let changingInfo = $('<span>').addClass(data.user.nick).append(data.user.nick + 'さんがタイピング中...');
+                $changing.append(changingInfo);
+            }
+        } else {
+            $changing.empty();
+        }
     });
 
     function joinRoom() {
-        if (roomName === undefined || roomName === null) {
-            roomName = prompt("input room name");
+        while (roomName.length < 1) {
+            roomName = prompt("ルームの名前を１文字以上入力してください");
         }
         $roomNameLabel.text(roomName);
         user.roomName = roomName;
+        if (!user.nick) {
+            let nick = "";
+            while (nick.length < 1) {
+                nick = prompt('あなたの名前を入力してください');
+            }
+            user.nick = nick;
+        }
         socket.emit('join', roomName, user);
+        let info = $('<li>').addClass('info');
+        info.html("[" + presentTime().time + "] " + "<b>WELCOME TO CHAT</b>");
+        $messages.empty();
+        $messages.append(info);
         divToggle();
     }
 
@@ -109,40 +207,41 @@
 
     function send() {
         let message = $writing.val();
-        let msg = {
-            'roomName': roomName,
-            'user': user,
-            'message': message
+        if (message.length > 0) {
+            let msg = {
+                'roomName': roomName,
+                'user': user,
+                'message': message
+            }
+            socket.emit('send', msg);
+            $writing.val('');
+            changingTrigger();
         }
-        socket.emit('send', msg);
-        $writing.val('');
     }
 
-    socket.on('info', data => {
-        const status = data.status;
-        const socket_id = data.socket_id;
-        const roomName = data.roomName;
-        let info = $('<li>').addClass('info');
-        if (status === 'join') {
-            info.text(socket_id + ' has joined to this room');
-        } else if (status === 'leave') {
-            info.text(socket_id + ' has left from this room');
+    function changingTrigger() {
+        let data = {user: user};
+        if ($writing.val().length > 0) {
+            data.status = 'begin';
+        } else {
+            data.status = 'end';
         }
-        $messages.append(info);
-    });
-
-    socket.on('publish', data => {
-        let socket_id = data.user.socket_id;
-        let message = data.message;
-        let li = $("<li>").text(socket_id + " : " + message);
-        $messages.append(li);
-    });
+        socket.emit('change', data);
+    }
 
     function divToggle() {
         $chatPanel.toggle();
         $listPanel.toggle();
-        $info.empty();
-        $messages.empty();
+    }
+
+    function presentTime() {
+        let date = new Date();
+        let dateString = date.getFullYear() + "-" + date.getMonth() + "-" + date.getDate();
+        let timeString = date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
+        return {
+            date: dateString,
+            time: timeString
+        };
     }
 </script>
 </html>
