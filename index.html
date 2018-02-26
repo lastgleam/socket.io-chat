@@ -2,11 +2,25 @@
 <html>
 <head>
     <title>Socket.IO chat</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <style>
-        #info {
+        .info {
             background-color: antiquewhite;
         }
     </style>
+    <script
+            src="https://code.jquery.com/jquery-3.3.1.min.js"
+            integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+            crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+            integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+            crossorigin="anonymous"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+            integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+            crossorigin="anonymous"></script>
 </head>
 <body>
 <div class="container">
@@ -19,7 +33,6 @@
     </div>
     <div class="container" id="chatPanel">
         <h2>roomName : <span id="roomNameLabel"></span></h2>
-        <ul id="info" name="info"></ul>
         <ul id="messages" name="messages"></ul>
         <input type="text" id="writing" name="writing"/>
         <button class="btn btn-primary" id="send" name="send" onClick="send()">send</button>
@@ -27,28 +40,11 @@
     </div>
 </div>
 </body>
-<script src="/socket.io/socket.io.js"></script>
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
-      integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
-        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
-        crossorigin="anonymous"></script>
-<script
-        src="https://code.jquery.com/jquery-3.3.1.min.js"
-        integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
-        crossorigin="anonymous"></script>
-<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
-        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
-        crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
-        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
-        crossorigin="anonymous"></script>
 <script>
     const $listPanel = $('#listPanel');
     const $chatPanel = $('#chatPanel');
     const $roomList = $('#roomList');
     const $socketIdLabel = $('#socketIdLabel');
-    const $info = $('#info');
     const $messages = $('#messages');
     const $send = $('#send');
     const $writing = $('#writing');
@@ -73,7 +69,7 @@
         socket.emit('rooms');
     });
 
-    socket.on('disconnected', function () {
+    socket.on('disconnect', function () {
         socket.emit('leave', roomName, user);
     });
 
@@ -126,13 +122,13 @@
         const status = data.status;
         const socket_id = data.socket_id;
         const roomName = data.roomName;
-        let info = $('<li>');
+        let info = $('<li>').addClass('info');
         if (status === 'join') {
             info.text(socket_id + ' has joined to this room');
         } else if (status === 'leave') {
             info.text(socket_id + ' has left from this room');
         }
-        $info.append(info);
+        $messages.append(info);
     });
 
     socket.on('publish', data => {
