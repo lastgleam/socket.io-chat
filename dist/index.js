@@ -8,6 +8,10 @@ var options = {
     pingInterval: 3000
 };
 var io = require('socket.io')(server, options);
+io.configure(function () {
+    io.set("transports", ["xhr-polling"]);
+    io.set("polling duration", 10);
+});
 
 server.listen(30000, function () {
     console.log('listening on *:30000');
