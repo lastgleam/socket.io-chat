@@ -179,7 +179,7 @@
 
     function joinRoom() {
         let roomName = "";
-        while (user.roomName.length < 1) {
+        while (!user.roomName) {
             roomName = prompt("ルームの名前を１文字以上入力してください");
         }
         user.roomName = roomName;
