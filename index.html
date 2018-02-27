@@ -4,13 +4,28 @@
     <title>Socket.IO chat</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <style>
-        .title {
-            background-color: azure;
+        .display {
+            display: block;
+            position: absolute;
+            height: 100%;
+            width: 100%;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            color: #FFF;
+            background: #757F9A; /* fallback for old browsers */
+            background: -webkit-linear-gradient(to top, #D7DDE8, #757F9A); /* Chrome 10-25, Safari 5.1-6 */
+            background: linear-gradient(to top, #D7DDE8, #757F9A); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
         }
-
         .info {
-            background-color: antiquewhite;
+            background-color: #FFF;
+            color : #000;
             text-align: center;
+        }
+        .list {
+            background-color: #FFF;
+            color : #000;
         }
 
         #messagesPanel {
@@ -43,29 +58,30 @@
             crossorigin="anonymous"></script>
 </head>
 <body>
-<div class="container">
-
-    <div class="panel top">
-        <h1 class="title"> //chat example</h1>
-        こんにちは！<b><span id="socketIdLabel" name="socketIdLabel"></span></b>さん
-    </div>
-    <div class="container" id="listPanel">
-        <h2>Room List</h2>
-        <ul id="roomList" name="roomList"></ul>
-        <button class="btn btn-success" id="create" onClick="joinRoom()">Create new room</button>
-    </div>
-    <div class="container" id="chatPanel">
-        <h2><span id="roomNameLabel"></span><span id="number"></span></h2>
-        <ul id="chatters"></ul>
-        <div id="messagesPanel">
-            <ul id="messages" name="messages"></ul>
+<main class="display">
+    <div class="container">
+        <div class="panel top">
+            <h1 class="title"> //chat example</h1>
+            こんにちは！<b><span id="socketIdLabel" name="socketIdLabel"></span></b>さん
         </div>
-        <span id="changing" name="changing"></span><br>
-        <input type="text" id="writing" name="writing"/>
-        <button class="btn btn-primary" id="send" name="send" onClick="send()">send</button>
-        <button class="btn btn-secondary" id="top" name="top" onClick="leaveRoom()">top</button>
+        <div class="container" id="listPanel">
+            <h2>Room List</h2>
+            <ul class="list" id="roomList" name="roomList"></ul>
+            <button class="btn btn-success" id="create" onClick="joinRoom()">Create new room</button>
+        </div>
+        <div class="container" id="chatPanel">
+            <h2><span id="roomNameLabel"></span><span id="number"></span></h2>
+            <ul class="list" id="chatters"></ul>
+            <div id="messagesPanel">
+                <ul id="messages" name="messages"></ul>
+            </div>
+            <span id="changing" name="changing"></span><br>
+            <input type="text" id="writing" name="writing"/>
+            <button class="btn btn-primary" id="send" name="send" onClick="send()">send</button>
+            <button class="btn btn-secondary" id="top" name="top" onClick="leaveRoom()">top</button>
+        </div>
     </div>
-</div>
+</main>
 </body>
 <script>
     const $listPanel = $('#listPanel');
@@ -117,7 +133,7 @@
             const link = $('<a>').attr('href', 'javascript:void(0)').on('click', () => {
                 roomName = _roomName;
                 joinRoom();
-            }).text(_roomName +" ("+ rooms[_roomName].length +")");
+            }).text(_roomName + " (" + rooms[_roomName].length + ")");
             const roomLink = $('<li>').html(link);
             $roomList.append(roomLink);
         });
