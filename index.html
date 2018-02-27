@@ -158,7 +158,7 @@
         let nick = data.user.nick;
         let message = data.message;
         let li = $("<li>").html("[" + presentTime().time +
-            "] <b>" + nick + "</b> (" + data.user.socket_id + ") " + " : " + message
+            "] <b>" + nick + "</b>").text(" (" + data.user.socket_id + ") " + " : " + message
         );
         $messages.append(li);
         $messagesPanel.scrollTop(99999999999999999999999999999999);
