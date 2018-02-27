@@ -13,7 +13,7 @@ io.configure(function () {
     io.set("polling duration", 10);
 });
 
-server.listen(30000, function () {
+server.listen(process.env.PORT || 30000, function () {
     console.log('listening on *:30000');
 });
 
