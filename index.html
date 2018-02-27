@@ -178,11 +178,12 @@
     });
 
     function joinRoom() {
-        while (roomName.length < 1) {
+        let roomName = "";
+        while (user.roomName.length < 1) {
             roomName = prompt("ルームの名前を１文字以上入力してください");
         }
-        $roomNameLabel.text(roomName);
         user.roomName = roomName;
+        $roomNameLabel.text(user.roomName);
         if (!user.nick) {
             let nick = "";
             while (nick.length < 1) {
