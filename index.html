@@ -178,8 +178,7 @@
     });
 
     function joinRoom() {
-        let roomName = "";
-        while (!user.roomName) {
+        while (roomName.length < 1) {
             roomName = prompt("ルームの名前を１文字以上入力してください");
         }
         user.roomName = roomName;
@@ -201,7 +200,7 @@
 
     function leaveRoom() {
         socket.emit('leave', roomName, user);
-        roomName = null;
+        roomName = "";
         divToggle();
         delete user.roomName;
     }
