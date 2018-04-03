@@ -1,4 +1,4 @@
-FROM node:carbon
+FROM node:boron
 MAINTAINER Kim Donghee <lastgleam@gmail.com>
 
 WORKDIR /usr/src/app
