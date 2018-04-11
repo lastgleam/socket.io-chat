@@ -26,16 +26,17 @@ docker run -d -p <your port>:30000 <your_name>/socket.io-sandbox
 
 ## how to use
 
-first, access to the path (default path is `localhost:30000`)
+First you access to the path 
 
-and enter the chatroom via chatroom list of the top page.
+Choose the chatroom on chatroom list of the top page
 
-if thre are no rooms created, you should create new chatroom `create a room` button 
+If there is no room created, you can create new chatroom by clicking 'creat a room' button.
 
-next, input your name as following message prompt.
+Once you get into the create page, input your name as the following message prompt appears.
 
-finally, you can chat with someone who already entered the same chatroom.
+Then you can chat with anyone who access the same chatroom. 
 
+Now, feel free to chat :D!
 
 
 
