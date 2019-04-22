@@ -1,6 +1,6 @@
 # socket.io-chat
 
-[Imgur](https://i.imgur.com/slOEQIc.png)
+![Imgur](https://i.imgur.com/slOEQIc.png)
 
 A chat application made with socket.io
 
