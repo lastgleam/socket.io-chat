@@ -25,6 +25,11 @@ docker build -t <your_name>/socket.io-sandbox  .
 docker run -d -p <your port>:30000 <your_name>/socket.io-sandbox
 ```
 
+## Demo site
+
+https://socket-chat-lastgleam.herokuapp.com/
+
+
 ## how to use
 
 First, you access to the path. (e.g., localhost:3000)
