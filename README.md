@@ -1,11 +1,12 @@
-# socket.io-sandbox
-A sandbox for socket.io
+# socket.io-chat
+
+A chat application made with socket.io
 
 You can create a simple chat server with this project
 
-## how to execute
+## how to run
 
-### local
+### local environment
 ```
 node index.js
 ```
@@ -26,15 +27,17 @@ docker run -d -p <your port>:30000 <your_name>/socket.io-sandbox
 
 ## how to use
 
-First you access to the path 
+First, you access to the path. (e.g., localhost:3000)
 
-Choose the chatroom on chatroom list of the top page
+Choose the chatroom on chatroom list of the top page.
 
 If there is no room created, you can create new chatroom by clicking 'creat a room' button.
 
 Once you get into the create page, input your name as the following message prompt appears.
 
 Then you can chat with anyone who access the same chatroom. 
+
+
 
 Now, feel free to chat :D!
 
