@@ -1,5 +1,7 @@
 # socket.io-chat
 
+![picture](!https://imgur.com/a/gc3Kkrl)
+
 A chat application made with socket.io
 
 You can create a simple chat server with this project
@@ -25,7 +27,7 @@ docker build -t <your_name>/socket.io-sandbox  .
 docker run -d -p <your port>:30000 <your_name>/socket.io-sandbox
 ```
 
-## Demo site
+## demo site
 
 https://socket-chat-lastgleam.herokuapp.com/
 
